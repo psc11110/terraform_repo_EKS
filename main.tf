@@ -19,7 +19,7 @@ data "aws_subnets" "default" {
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   cluster_name    = "student-eks-cluster"
-  cluster_version = "1.29"
+  cluster_version = "20.8.5"
 
   vpc_id     = data.aws_vpc.default.id
   subnet_ids = data.aws_subnets.default.ids
