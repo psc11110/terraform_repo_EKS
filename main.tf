@@ -1,13 +1,13 @@
 provider "aws" {
-  region = "ap-southeast-1"   # apni region daalo
+  region = "ap-southeast-1"
 }
 
-# Get default VPC
+# Default VPC
 data "aws_vpc" "default" {
   default = true
 }
 
-# Get default subnets
+# Default Subnets
 data "aws_subnets" "default" {
   filter {
     name   = "vpc-id"
@@ -15,11 +15,12 @@ data "aws_subnets" "default" {
   }
 }
 
-# EKS Cluster
 module "eks" {
-  source          = "terraform-aws-modules/eks/aws"
+  source  = "terraform-aws-modules/eks/aws"
+  version = "20.8.5"
+
   cluster_name    = "student-eks-cluster"
-  cluster_version = "20.8.5"
+  cluster_version = "1.29"
 
   vpc_id     = data.aws_vpc.default.id
   subnet_ids = data.aws_subnets.default.ids
@@ -27,12 +28,11 @@ module "eks" {
   cluster_endpoint_public_access = true
 
   eks_managed_node_groups = {
-    worker_nodes = {
-      desired_capacity = 2
-      max_capacity     = 3
-      min_capacity     = 1
-
-      instance_types = ["t2.medium"]
+    default = {
+      instance_types = ["t3.medium"]
+      desired_size   = 2
+      max_size       = 3
+      min_size       = 1
     }
   }
 }
